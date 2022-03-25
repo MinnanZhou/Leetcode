@@ -1,26 +1,34 @@
-import bisect
-import math
-
-
 class Solution:
     def kthSmallest(self, matrix, k: int) -> int:
-        stack1 = []
+        def LessorEqual(value):
+            count = 0
+            index_c, index_r = n - 1, 0
+            while index_r < n and index_c >= 0:
+                if matrix[index_r][index_c] <= value:
+                    count += (index_c + 1)
+                    index_r += 1
+                else:
+                    index_c -= 1
+            return count
+
+        lo, hi = matrix[0][0], matrix[-1][-1]
         n = len(matrix)
-        left_bound = (1 + n) * n // 2
-        if k <= left_bound:
-            belong = math.ceil(((8 * k + 1) ** 0.5 - 1) / 2)
-            pos = k - (belong - 1) * belong // 2
-            for i in range(belong):
-                bisect.insort(stack1, matrix[belong - 1 - i][i])
-            return stack1[pos - 1]
-        else:
-            belong = math.ceil(((8 * (n ** 2 + 1 - k) + 1) ** 0.5 - 1) / 2)
-            pos = (belong - 1) * belong // 2 - (n ** 2 - k)
-            for i in range(-belong, 0):
-                bisect.insort(stack1, matrix[i][-belong - 1 - i])
-            return stack1[pos - 1]
+        res = 0
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            count_LE = LessorEqual(mid)
+            if count_LE >= k:
+                res = mid
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        return res
 
 
 a = Solution()
-inp = [[1,3,5],[6,7,12],[11,14,14]]
-print(a.kthSmallest(inp, 3))
+inp = [[10, 40, 70, 110, 150],
+       [20, 50, 80, 120, 190],
+       [30, 60, 90, 160, 220],
+       [100, 130, 140, 170, 240],
+       [180, 210, 230, 260, 300]]
+print(a.kthSmallest(inp, 5))
