@@ -1,3 +1,7 @@
+import bisect
+from typing import List
+
+
 def func(nums, target):
     if len(nums) < 3:
         for i in range(len(nums)):
@@ -46,6 +50,22 @@ def func(nums, target):
     return -1
 
 
-inp = [1, 2, 3, 5, 6, 7]
-tar = 0
-print(func(inp, tar))
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        n = len(nums)
+        if nums[0] <= nums[-1]:
+            if target < nums[0] or target > nums[-1]: return -1
+            index = bisect.bisect_left(nums, target)
+            return index if nums[index] == target else -1
+        else:
+            left = self.search(nums[:n // 2], target)
+            if left != -1: return left
+            right = self.search(nums[n // 2:], target)
+            if right != -1: return right + n // 2
+            return -1
+
+
+s = Solution()
+inp = [4, 5, 6, 7, 0, 1, 2]
+goal = 0
+print(s.search(inp, goal))
